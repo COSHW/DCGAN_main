@@ -1,9 +1,9 @@
 import tensorflow as tf
-import matplotlib.pyplot as plt
 import os
 from IPython import display
 import time
 import tqdm
+from training.generate_image import generate_and_save_images
 
 
 class Training:
@@ -48,17 +48,6 @@ class Training:
         self.generator_optimizer.apply_gradients(zip(gradients_of_generator, self.generator.trainable_variables))
         self.discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, self.discriminator.trainable_variables))
 
-    def generate_and_save_images(self, model, epoch, test_input):
-        predictions = model(test_input, training=False)
-
-        for i in range(predictions.shape[0]):
-            plt.subplot(4, 4, i + 1)
-            plt.imshow(predictions[i, :, :, 0] * 127.5 + 127.5, cmap='gray')
-            plt.axis('off')
-
-        plt.savefig('images\image_at_epoch_{:04d}.png'.format(epoch))
-        plt.show()
-
     def train_start(self, dataset, epochs):
         for epoch in range(epochs):
             start = time.time()
@@ -69,7 +58,7 @@ class Training:
 
             # Produce images for the GIF as we go
             display.clear_output(wait=True)
-            self.generate_and_save_images(self.generator, epoch + 1, self.seed)
+            generate_and_save_images(self.generator, epoch + 1, self.seed)
 
             # Save the model every 15 epochs
             if (epoch + 1) % 15 == 0:
@@ -79,6 +68,6 @@ class Training:
 
         # Generate after the final epoch
         display.clear_output(wait=True)
-        self.generate_and_save_images(self.generator, epochs, self.seed)
+        generate_and_save_images(self.generator, epochs, self.seed)
 
 
