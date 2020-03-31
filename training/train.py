@@ -51,13 +51,11 @@ class Training:
     def train_start(self, dataset, epochs):
         for epoch in range(epochs):
             start = time.time()
-            i=1
             for image_batch in tqdm.tqdm(dataset):
-                i+=1
                 self.train_step(image_batch)
 
             # Produce images for the GIF as we go
-            display.clear_output(wait=True)
+            # display.clear_output(wait=True)
             generate_and_save_images(self.generator, epoch + 1, self.seed)
 
             # Save the model every 15 epochs
@@ -67,7 +65,10 @@ class Training:
             print('Time for epoch {} is {} sec'.format(epoch + 1, time.time() - start))
 
         # Generate after the final epoch
-        display.clear_output(wait=True)
+        # display.clear_output(wait=True)
         generate_and_save_images(self.generator, epochs, self.seed)
-
+        try:
+            self.generator.save(r"model_risk.h5")
+        except Exception as e:
+            print(e)
 
