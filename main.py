@@ -9,7 +9,7 @@ import os
 import traceback
 
 
-def create_model(dataset_dir, img_size, colors, buffer_size, batch_size, epochs, num_examples_to_generate, model_file, time, progress_bar, label_top, label_low):
+def create_model(dataset_dir, img_size, colors, buffer_size, batch_size, epochs, num_examples_to_generate, model_file, time, progress_bar, label_top, label_low, file_name):
     if epochs == "":
         if time == "":
             return "Error_Need_Time_Or_Epochs"
@@ -61,7 +61,7 @@ def create_model(dataset_dir, img_size, colors, buffer_size, batch_size, epochs,
         traceback.print_exc()
     label_top.setText("Начал обучение")
     try:
-        trainer.train_start(train_dataset, epochs, time)
+        trainer.train_start(train_dataset, epochs, time, file_name)
     except:
         traceback.print_exc()
     label_top.setText("Готово!")

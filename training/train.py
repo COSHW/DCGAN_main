@@ -45,7 +45,7 @@ class Training:
         self.generator_optimizer.apply_gradients(zip(gradients_of_generator, self.generator.trainable_variables))
         self.discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, self.discriminator.trainable_variables))
 
-    def train_start(self, dataset, epochs, time_for_training):
+    def train_start(self, dataset, epochs, time_for_training, file_name):
         if epochs == "":
             start = time.time()
             self.train_step(dataset[0])
@@ -64,6 +64,6 @@ class Training:
             print('Эпоха {} тренировалась {} секунд'.format(epoch + 1, time.time() - start))
 
         generate_and_save_images(self.generator, epochs, self.seed, self.colors)
-        self.generator.save(r"model.h5")
+        self.generator.save(file_name)
 
 

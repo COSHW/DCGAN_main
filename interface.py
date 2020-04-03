@@ -33,7 +33,7 @@ class AppStart(QtWidgets.QMainWindow, Proj_ui.Ui_MainWindow):
                                          self.textEdit_2.toPlainText(), self.comboBox_3.currentText(),
                                          self.textEdit_4.toPlainText(), self.comboBox.currentText(),
                                          self.textEdit_5.toPlainText(), '20',
-                                         self.progressBar, self.label_9, self.label_10)
+                                         self.progressBar, self.label_9, self.label_10, self.textEdit_5.toPlainText())
             if response == "Error_Model_Not_Exist":
                 self.label_9.setText("Модель не найдена!")
             elif response == "Error_Need_Time_Or_Epochs":
