@@ -2,7 +2,6 @@ import sys
 from PyQt5 import QtWidgets, QtCore
 import Proj_ui
 import main
-import threading
 import traceback
 
 
@@ -16,10 +15,6 @@ class AppStart(QtWidgets.QMainWindow, Proj_ui.Ui_MainWindow):
 
     def start_process(self):
         self.pushButton.setEnabled(False)
-        self.progressBar.setGeometry(QtCore.QRect(360, 570, 581, 31))
-        self.progressBar.setProperty("value", 20)
-        self.progressBar.setObjectName("progressBar")
-        self.label_9.setText("Собираю датасет")
         # tread = threading.Thread(target=self.start_thread)
         # tread.daemon = True
         # tread.start()
@@ -28,6 +23,7 @@ class AppStart(QtWidgets.QMainWindow, Proj_ui.Ui_MainWindow):
 
     def start_thread(self):
         try:
+            self.label_9.setText("Собираю датасет")
             colors = 1 if self.comboBox_4.currentText() == "Чёрно-белая" else 3
             response = main.create_model(self.textEdit_13.toPlainText(), self.comboBox_2.currentText(), colors,
                                          self.textEdit_2.toPlainText(), self.comboBox_3.currentText(),
