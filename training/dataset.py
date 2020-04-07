@@ -3,10 +3,9 @@ import numpy as np
 from PIL import Image
 import os
 import cv2
-import traceback
-import matplotlib.pyplot as plt
 
-def make_dataset(dataset_dir, img_size, colors, BUFFER_SIZE, BATCH_SIZE, progress_bar):
+
+def make_dataset(dataset_dir, img_size, BUFFER_SIZE, BATCH_SIZE):
     train_images = []
     i = 1
     for item in os.listdir(dataset_dir):
@@ -18,15 +17,11 @@ def make_dataset(dataset_dir, img_size, colors, BUFFER_SIZE, BATCH_SIZE, progres
             break
         else:
             i += 1
-        print(int(i/BUFFER_SIZE*100))
-        # progress_bar.setProperty("value", int(i/BUFFER_SIZE)*100)
+        print(int(i/BUFFER_SIZE*100)) if i % 1000 == 0 else 1
 
-    train_images = np.array(train_images)
-    # train_images = train_images.reshape(train_images.shape[0], img_size, img_size, colors).astype('float32')
-
-    train_images = (train_images - 127.5) / 127.5
+    train_images = np.array(train_images, dtype='float32')
+    for i in range(len(train_images)):
+        train_images[i] = (train_images[i] - 127.5) / 127.5
     train_dataset = tf.data.Dataset.from_tensor_slices(train_images).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
 
     return train_dataset
-
-# make_dataset(r"D:\Projects\PythonProjects\4 kurs\PohProbuem\dataset", 32, 3, 10, 1, 1)

@@ -6,9 +6,8 @@ from training.generate_image import generate_and_save_images
 
 class Training:
 
-    def __init__(self, batch_size, noise_dim, generator, discriminator, seed, colors):
+    def __init__(self, batch_size, generator, discriminator, seed, colors):
         self.batch_size = batch_size
-        self.noise_dim = noise_dim
         self.cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         self.generator = generator
         self.discriminator = discriminator
@@ -45,7 +44,7 @@ class Training:
         self.generator_optimizer.apply_gradients(zip(gradients_of_generator, self.generator.trainable_variables))
         self.discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, self.discriminator.trainable_variables))
 
-    def train_start(self, dataset, epochs, time_for_training, file_name):
+    def train_start(self, dataset, epochs, time_for_training, new_modal_file):
         if epochs == "":
             start = time.time()
             self.train_step(dataset[0])
@@ -64,6 +63,8 @@ class Training:
             print('Эпоха {} тренировалась {} секунд'.format(epoch + 1, time.time() - start))
 
         generate_and_save_images(self.generator, epochs, self.seed, self.colors)
-        self.generator.save(file_name)
+
+        self.generator.save(new_modal_file)
+        self.discriminator.save(new_modal_file)
 
 

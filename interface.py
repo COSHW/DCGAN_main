@@ -1,8 +1,9 @@
 import sys
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets
 import Proj_ui
 import main
 import traceback
+import gif
 
 
 class AppStart(QtWidgets.QMainWindow, Proj_ui.Ui_MainWindow):
@@ -10,14 +11,12 @@ class AppStart(QtWidgets.QMainWindow, Proj_ui.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
-
         self.pushButton.clicked.connect(self.start_process)
+        self.pushButton_1.clicked.connect(self.generate_image)
+        self.pushButton_2.clicked.connect(self.generate_gif)
 
     def start_process(self):
         self.pushButton.setEnabled(False)
-        # tread = threading.Thread(target=self.start_thread)
-        # tread.daemon = True
-        # tread.start()
         self.start_thread()
         self.pushButton.setEnabled(True)
 
@@ -29,7 +28,7 @@ class AppStart(QtWidgets.QMainWindow, Proj_ui.Ui_MainWindow):
                                          self.textEdit_2.toPlainText(), self.comboBox_3.currentText(),
                                          self.textEdit_4.toPlainText(), self.comboBox.currentText(),
                                          self.textEdit_5.toPlainText(), '20',
-                                         self.progressBar, self.label_9, self.label_10, self.textEdit_5.toPlainText())
+                                         self.label_9, self.textEdit_10.toPlainText())
             if response == "Error_Model_Not_Exist":
                 self.label_9.setText("Модель не найдена!")
             elif response == "Error_Need_Time_Or_Epochs":
@@ -38,6 +37,29 @@ class AppStart(QtWidgets.QMainWindow, Proj_ui.Ui_MainWindow):
                 self.label_9.setText("Датасет не найден!")
         except:
             traceback.print_exc()
+            self.label_9.setText("Произошла ошибка")
+
+    def generate_image(self):
+        if self.textEdit_5.toPlainText() == "":
+            self.label_9.setText("Укажите используемую модель в \"Путь к файлу модели\"!")
+        elif self.textEdit_6.toPlainText() == "":
+            self.label_9.setText("Укажите название генерируемого файла!")
+        else:
+            try:
+                main.create(self.textEdit_5.toPlainText(), self.textEdit_6.toPlainText())
+            except:
+                traceback.print_exc()
+                self.label_9.setText("Произошла ошибка")
+
+    def generate_gif(self):
+        if self.textEdit_6.toPlainText() == "":
+            self.label_9.setText("Укажите название генерируемого файла!")
+        else:
+            try:
+                gif.gif_gen()
+            except:
+                traceback.print_exc()
+                self.label_9.setText("Произошла ошибка")
 
 
 def start():
