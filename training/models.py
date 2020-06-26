@@ -28,36 +28,26 @@ class ModelMaking:
 
     def make_generator_model_32_test(self, batch_size, img_size, colors):
         model = tf.keras.Sequential()
-        model.add(tf.keras.layers.Dense(int(img_size/8)*int(img_size/8)*batch_size, use_bias=False, input_shape=(100,)))
+        model.add(tf.keras.layers.Dense(4*4*batch_size, use_bias=False, input_shape=(100,)))
+        model.add(tf.keras.layers.ReLU())
+
+        model.add(tf.keras.layers.Reshape((4, 4, batch_size)))
         model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.LeakyReLU())
+        assert model.output_shape == (None, 4, 4, batch_size)
 
-        model.add(tf.keras.layers.Reshape((int(img_size/8), int(img_size/8), batch_size)))
-        assert model.output_shape == (None, int(img_size/8), int(img_size/8), batch_size)
-
-        model.add(tf.keras.layers.Conv2DTranspose(int(batch_size/2), (4, 4), strides=(2, 2), padding='same', use_bias=False))
-        assert model.output_shape == (None, int(img_size/4), int(img_size/4), int(batch_size/2))
+        model.add(tf.keras.layers.Conv2DTranspose(int(batch_size/2), (5, 5), strides=(2, 2), padding='same', use_bias=False))
+        assert model.output_shape == (None, 8, 8, int(batch_size))
         model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.LeakyReLU())
+        model.add(tf.keras.layers.ReLU())
 
-        model.add(tf.keras.layers.Conv2DTranspose(int(batch_size / 2), (4, 4), strides=(2, 2), padding='same',
+        model.add(tf.keras.layers.Conv2DTranspose(int(batch_size/4), (5, 5), strides=(2, 2), padding='same',
                                                   use_bias=False))
-        assert model.output_shape == (None, int(img_size / 2), int(img_size / 2), int(batch_size / 2))
+        assert model.output_shape == (None, 16, 16, int(batch_size / 2))
         model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.LeakyReLU())
+        model.add(tf.keras.layers.ReLU())
 
-        model.add(tf.keras.layers.Conv2DTranspose(int(batch_size/2), (4, 4), strides=(2, 2), padding='same', use_bias=False))
-        assert model.output_shape == (None, int(img_size), int(img_size), batch_size/4)
-        model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.LeakyReLU())
-
-        model.add(tf.keras.layers.Conv2D(int(batch_size/2), (3, 3), strides=(2, 2), padding='same',))
-        assert model.output_shape == (None, int(img_size/2), int(img_size/2), batch_size / 2)
-        model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.LeakyReLU())
-
-        model.add(tf.keras.layers.Conv2DTranspose(colors, (4, 4), strides=(2, 2), padding='same', use_bias=False, activation='tanh'))
-        assert model.output_shape == (None, img_size, img_size, 3)
+        model.add(tf.keras.layers.Conv2DTranspose(colors, (3, 3), strides=(2, 2), padding='same', use_bias=False, activation='tanh'))
+        assert model.output_shape == (None, 32, 32, colors)
 
         return model
 
@@ -155,23 +145,42 @@ class ModelMaking:
 
     def make_discriminator_model(self, batch_size, img_size, colors):
         model = tf.keras.Sequential()
-        model.add(tf.keras.layers.Conv2D(int(batch_size/4), (5, 5), strides=(2, 2), padding='same',
+        model.add(tf.keras.layers.Conv2D(int(batch_size/16), (3, 3), strides=(2, 2), padding='same',
                                          input_shape=[img_size, img_size, colors]))
         model.add(tf.keras.layers.LeakyReLU())
+        model.add(tf.keras.layers.BatchNormalization())
         model.add(tf.keras.layers.Dropout(0.3))
 
-        model.add(tf.keras.layers.Conv2D(int(batch_size/2), (5, 5), strides=(2, 2), padding='same'))
+        model.add(tf.keras.layers.Conv2D(int(batch_size/8), (3, 3), strides=(1, 1), padding='same'))
         model.add(tf.keras.layers.LeakyReLU())
+        model.add(tf.keras.layers.BatchNormalization())
         model.add(tf.keras.layers.Dropout(0.3))
 
-        model.add(tf.keras.layers.Conv2D(int(batch_size), (5, 5), strides=(2, 2), padding='same'))
+        model.add(tf.keras.layers.Conv2D(int(batch_size/4), (3, 3), strides=(2, 2), padding='same'))
         model.add(tf.keras.layers.LeakyReLU())
+        model.add(tf.keras.layers.BatchNormalization())
+        model.add(tf.keras.layers.Dropout(0.3))
+
+        model.add(tf.keras.layers.Conv2D(int(batch_size/2), (3, 3), strides=(1, 1), padding='same'))
+        model.add(tf.keras.layers.LeakyReLU())
+        model.add(tf.keras.layers.BatchNormalization())
+        model.add(tf.keras.layers.Dropout(0.3))
+
+        model.add(tf.keras.layers.Conv2D(int(batch_size), (3, 3), strides=(2, 2), padding='same'))
+        model.add(tf.keras.layers.LeakyReLU())
+        model.add(tf.keras.layers.BatchNormalization())
+        model.add(tf.keras.layers.Dropout(0.3))
+
+        model.add(tf.keras.layers.Conv2D(int(batch_size), (3, 3), strides=(1, 1), padding='same'))
+        model.add(tf.keras.layers.LeakyReLU())
+        model.add(tf.keras.layers.BatchNormalization())
         model.add(tf.keras.layers.Dropout(0.3))
 
         if int(img_size) == 128:
 
-            model.add(tf.keras.layers.Conv2D(batch_size, (5, 5), strides=(2, 2), padding='same'))
+            model.add(tf.keras.layers.Conv2D(batch_size, (3, 3), strides=(2, 2), padding='same'))
             model.add(tf.keras.layers.LeakyReLU())
+            model.add(tf.keras.layers.BatchNormalization())
             model.add(tf.keras.layers.Dropout(0.3))
 
         model.add(tf.keras.layers.Flatten())

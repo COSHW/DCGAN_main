@@ -4,6 +4,7 @@ import Proj_ui
 import main
 import traceback
 import gif
+import asyncio
 
 
 class AppStart(QtWidgets.QMainWindow, Proj_ui.Ui_MainWindow):
@@ -24,11 +25,13 @@ class AppStart(QtWidgets.QMainWindow, Proj_ui.Ui_MainWindow):
         try:
             self.label_9.setText("Собираю датасет")
             colors = 1 if self.comboBox_4.currentText() == "Чёрно-белая" else 3
-            response = main.create_model(self.textEdit_13.toPlainText(), self.comboBox_2.currentText(), colors,
+            response = asyncio.get_event_loop()
+            response.run_until_complete(main.create_model(self.textEdit_13.toPlainText(), self.comboBox_2.currentText(), colors,
                                          self.textEdit_2.toPlainText(), self.comboBox_3.currentText(),
                                          self.textEdit_4.toPlainText(), self.comboBox.currentText(),
                                          self.textEdit_5.toPlainText(), '20',
-                                         self.label_9, self.textEdit_10.toPlainText())
+                                         self.label_9, self.textEdit_10.toPlainText(), self.progressBar))
+            response.close()
             if response == "Error_Model_Not_Exist":
                 self.label_9.setText("Модель не найдена!")
             elif response == "Error_Need_Time_Or_Epochs":

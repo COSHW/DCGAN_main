@@ -15,3 +15,4 @@ def gif_gen():
         for i, filename in enumerate(files):
             image = imageio.imread(os.path.join('training_images', str(filename)+'.png'))
             writer.append_data(image)
+

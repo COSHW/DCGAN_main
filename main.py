@@ -8,9 +8,10 @@ import numpy
 import os
 import traceback
 
-
+async def pb(pp, v):
+    pp.setValue(v)
 # создание новой модели или тренинг существующей
-def create_model(dataset_dir, img_size, colors, buffer_size, batch_size, epochs, num_examples_to_generate, exist_model_file, time, label_top, new_modal_file):
+async def create_model(dataset_dir, img_size, colors, buffer_size, batch_size, epochs, num_examples_to_generate, exist_model_file, time, label_top, new_modal_file, progress):
     # проверка на основные данные
     if new_modal_file != "":
         if new_modal_file[-3:] != '.h5':
@@ -46,7 +47,7 @@ def create_model(dataset_dir, img_size, colors, buffer_size, batch_size, epochs,
 
     # создание тренировочных данных
     train_dataset = dataset.make_dataset(dataset_dir, int(img_size), int(buffer_size), int(batch_size))
-
+    await pb(progress, 20)
     # <------------------------------------------------------------------------------------------------->
 
     # создание модели в зависимости от размера изображения
@@ -66,8 +67,8 @@ def create_model(dataset_dir, img_size, colors, buffer_size, batch_size, epochs,
     else:
         # загрузка внешней модели, если существует
         try:
-            if new_modal_file[-3:] != '.h5':
-                new_modal_file = new_modal_file + '.h5'
+            if exist_model_file[-3:] != '.h5':
+                exist_model_file = exist_model_file + '.h5'
             generator = tf.keras.models.load_model(exist_model_file)
         except:
             traceback.print_exc()

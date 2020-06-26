@@ -5,15 +5,15 @@ from training.generate_image import generate_and_save_images
 
 
 class Training:
-
     def __init__(self, batch_size, generator, discriminator, seed, colors):
         self.batch_size = batch_size
         self.cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         self.generator = generator
         self.discriminator = discriminator
         self.generator_optimizer = tf.keras.optimizers.Adam(0.0002)
-        self.discriminator_optimizer = tf.keras.optimizers.Adam(0.001)
+        self.discriminator_optimizer = tf.keras.optimizers.Adam(0.0002)
         self.seed = seed
+        self.noise_dim = 100
         self.colors = colors
 
     def discriminator_loss(self, real_output, fake_output):
@@ -65,6 +65,5 @@ class Training:
         generate_and_save_images(self.generator, epochs, self.seed, self.colors)
 
         self.generator.save(new_modal_file)
-        self.discriminator.save(new_modal_file)
-
+        self.discriminator.save(new_modal_file[:-3]+"_d.h5")
 
